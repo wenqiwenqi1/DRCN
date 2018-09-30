@@ -470,7 +470,7 @@ if __name__ == "__main__":
                        "batch_size": {"train": 36, "test": 4}},
                       {"name": "target", "type": "image", "list_path": {"train": "../data/office/" + targetlist},
                        "batch_size": {"train": 36, "test": 4}}]
-    config["network"] = {"name": "DenseNet121", "use_bottleneck": False, "bottleneck_dim": 256}
+    config["network"] = {"name": "ResNet50", "use_bottleneck": False, "bottleneck_dim": 256}
     config["optimizer"] = {"type": "SGD",
                            "optim_params": {"lr": 1.0, "momentum": 0.9, "weight_decay": 0.0005, "nesterov": True},
                            "lr_type": "inv", "lr_param": {"init_lr": 0.0003, "gamma": 0.0003, "power": 0.75}}

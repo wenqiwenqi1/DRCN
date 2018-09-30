@@ -318,21 +318,21 @@ if __name__ == "__main__":
     os.environ["CUDA_VISIBLE_DEVICES"] = '1'
 
     config = {}
-    config["num_iterations"] = 300
-    config["test_interval"] = 300
+    config["num_iterations"] = 500
+    config["test_interval"] = 500
     config["prep"] = [{"name": "source", "type": "image", "test_10crop": True, "resize_size": 256, "crop_size": 224},
                       {"name": "target", "type": "image", "test_10crop": True, "resize_size": 256, "crop_size": 224}]
     config["loss"] = {"name": "DAN", "trade_off": 1.0}
-    config["data"] = [{"name": "source", "type": "image", "list_path": {"train": "../data/office/real12_list.txt"},
+    config["data"] = [{"name": "source", "type": "image", "list_path": {"train": "../data/office/amazon_list.txt"},
                        "batch_size": {"train": 36, "test": 4}},
-                      {"name": "target", "type": "image", "list_path": {"train": "../data/office/synthetic6_list.txt"},
+                      {"name": "target", "type": "image", "list_path": {"train": "../data/office/webcam10_list.txt"},
                        "batch_size": {"train": 36, "test": 4}}]
     config["network"] = {"name": "ResNet50", "use_bottleneck": False, "bottleneck_dim": 256}
     config["optimizer"] = {"type": "SGD",
                            "optim_params": {"lr": 1.0, "momentum": 0.9, "weight_decay": 0.0005, "nesterov": True},
                            "lr_type": "inv", "lr_param": {"init_lr": 0.0003, "gamma": 0.0003, "power": 0.75}}
     print config["loss"]
-    transfer_classification(config, 'res50_real_300')
+    transfer_classification(config, 'res50_amazon_new')
 
 
 

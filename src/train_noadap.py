@@ -188,7 +188,6 @@ def transfer_classification(config,name):
     net_config = config["network"]
     base_network = network.network_dict[net_config["name"]]()
     if net_config["use_bottleneck"]:
-        # 在最后一层前加入2048->256的隐藏层
         bottleneck_layer = nn.Linear(base_network.output_num(), net_config["bottleneck_dim"])
         classifier_layer = nn.Linear(bottleneck_layer.out_features, class_num)
     else:
@@ -243,15 +242,9 @@ def transfer_classification(config,name):
     len_train_target = len(dset_loaders["target"]["train"]) - 1
     transfer_loss_value = classifier_loss_value = total_loss_value = 0.0
     max_accuracy = 0
-    import codecs
-    f = codecs.open('../result/' +'noada', 'w', 'utf-8')
     for i in range(config["num_iterations"]+1):
         ## test in the train
-        if i % 100 == 0:
-            print '第',i,'次'
         if i % config["test_interval"] == 0 and i!=0:
-        # if i ==config["test_interval"]-1:
-
             base_network.train(False)
             classifier_layer.train(False)
 
@@ -267,9 +260,7 @@ def transfer_classification(config,name):
                 print 'save',i
                 if(accuracy>max_accuracy):
                     max_accuracy=accuracy
-
-                    # torch.save(bottleneck_layer, '../../save/bottleneck_layer_'+name+'.pkl')
-                print '第{0}次accuracy:'.format(i),accuracy,'max_accuracy:',max_accuracy
+                print 'iter{0}accuracy:'.format(i),accuracy,'max_accuracy:',max_accuracy
 
 
 
@@ -283,16 +274,7 @@ def transfer_classification(config,name):
                                                      test_10crop=prep_dict["target"]["test_10crop"], gpu=use_gpu)
                 if (accuracy > max_accuracy):
                     max_accuracy = accuracy
-
-
-                    # torch.save(bottleneck_layer, '../../save/bottleneck_layer_'+name+'.pkl')
-                print '第{0}次accuracy:'.format(i), accuracy, 'max_accuracy:', max_accuracy
-                f.write(str(i) + ':' + str(accuracy) + '\n')
-
-
-
-                # print image_classification_test(dset_loaders["target"], nn.Sequential(base_network, classifier_layer),
-                #                                 test_10crop=prep_dict["target"]["test_10crop"], gpu=use_gpu)
+                print 'iter{0}accuracy:'.format(i), accuracy, 'max_accuracy:', max_accuracy
 
         loss_test = nn.BCELoss()
         ## train one iter
@@ -323,9 +305,6 @@ def transfer_classification(config,name):
         outputs = classifier_layer(features)
 
         classifier_loss = class_criterion(outputs.narrow(0, 0, inputs.size(0) / 2), labels_source)
-        ## switch between different transfer loss
-
-
         total_loss =classifier_loss
         total_loss.backward()
         optimizer.step()
